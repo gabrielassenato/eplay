@@ -1,104 +1,64 @@
+import { useEffect, useState } from 'react'
+
 import Banner from '../../components/Banner'
 import ProductsList from '../../components/ProductsList'
 
-import resident from '../../assets/images/resident.png'
-import diablo from '../../assets/images/diablo.png'
-import star_wars from '../../assets/images/star_wars.png'
-import zelda from '../../assets/images/zelda.png'
-import Game from '../../models/Game'
+import { useGetOnSaleQuery, useGetSoonQuery } from '../../services/api'
 
-const promocoes: Game[] = [
-  {
-    id: 1,
-    image: resident,
-    infos: ['10%', 'R$ 250,00'],
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horror...',
-    system: 'Windows',
-    category: 'Ação',
-    title: 'Resident Evil 4'
-  },
-  {
-    id: 2,
-    image: diablo,
-    infos: ['5%', 'R$ 290,00'],
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horror...',
-    system: 'PS5',
-    category: 'Ação',
-    title: 'Diablo'
-  },
-  {
-    id: 3,
-    image: star_wars,
-    infos: ['10%', 'R$ 250,00'],
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horror...',
-    system: 'Windows',
-    category: 'Ação',
-    title: 'Star Wars'
-  },
-  {
-    id: 4,
-    image: zelda,
-    infos: ['10%', 'R$ 250,00'],
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horror...',
-    system: 'Windows',
-    category: 'Ação',
-    title: 'Zelda'
+export interface GalleryItem {
+  type: 'image' | 'video'
+  url: string
+}
+
+export type Game = {
+  id: number
+  name: string
+  description: string
+  release_date?: string
+  prices: {
+    discount?: number
+    old?: number
+    current?: number
   }
-]
-
-const emBreve: Game[] = [
-  {
-    id: 5,
-    image: resident,
-    infos: ['10%', 'R$ 250,00'],
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horror...',
-    system: 'Windows',
-    category: 'Ação',
-    title: 'Resident Evil 4'
-  },
-  {
-    id: 6,
-    image: resident,
-    infos: ['5%', 'R$ 290,00'],
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horror...',
-    system: 'PS5',
-    category: 'Ação',
-    title: 'Resident Evil 4'
-  },
-  {
-    id: 7,
-    image: resident,
-    infos: ['10%', 'R$ 250,00'],
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horror...',
-    system: 'Windows',
-    category: 'Ação',
-    title: 'Resident Evil 4'
-  },
-  {
-    id: 8,
-    image: resident,
-    infos: ['10%', 'R$ 250,00'],
-    description:
-      'Resident Evil 4, conhecido no Japão como Biohazard 4, é um jogo eletrônico de survival horror...',
-    system: 'Windows',
-    category: 'Ação',
-    title: 'Resident Evil 4'
+  details: {
+    category: string
+    system: string
+    developer: string
+    publisher: string
+    languages: string[]
   }
-]
+  media: {
+    thumbnail: string
+    cover: string
+    gallery: GalleryItem[]
+  }
+}
 
-const Home = () => (
-  <>
-    <Banner />
-    <ProductsList games={promocoes} title="Promoções" background="gray" />
-    <ProductsList games={emBreve} title="Em breve" background="black" />
-  </>
-)
+const Home = () => {
+  const { data: onSaleGames } = useGetOnSaleQuery()
+  const { data: soonGames } = useGetSoonQuery()
+
+  if (onSaleGames && soonGames) {
+    return (
+      <>
+        <Banner />
+        <ProductsList
+          games={onSaleGames}
+          title="Promoções"
+          background="gray"
+          id="on-sale"
+        />
+        <ProductsList
+          games={soonGames}
+          title="Em breve"
+          background="black"
+          id="coming-soon"
+        />
+      </>
+    )
+  }
+
+  return <h4>Carregando</h4>
+}
 
 export default Home
