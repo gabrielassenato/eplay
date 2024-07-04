@@ -2,7 +2,6 @@ import Button from '../Button'
 import Tag from '../Tag'
 import { parseToBrl } from '../../utils'
 
-import { Game } from '../../pages/Home'
 import { useDispatch } from 'react-redux'
 
 import { add, open } from '../../store/reducers/cart'
